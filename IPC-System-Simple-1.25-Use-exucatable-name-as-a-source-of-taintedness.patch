@@ -1,0 +1,37 @@
+From ff8028c4d95425faa5b0705b8ed8c84b1112c7e4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Wed, 2 Aug 2017 17:29:13 +0200
+Subject: [PATCH] Use exucatable name as a source of taintedness
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Test::Simple >= 1.302065 injects variables into the environment. These
+are not tainted and caused a random t/07_taint.t test failures.
+
+This patch fixes it by using executable name $0 instead.
+
+https://github.com/pjf/ipc-system-simple/issues/21
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ t/07_taint.t | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/t/07_taint.t b/t/07_taint.t
+index 49cee12..be449cd 100644
+--- a/t/07_taint.t
++++ b/t/07_taint.t
+@@ -17,8 +17,8 @@ use_ok("IPC::System::Simple","run","capture");
+ 
+ chdir("t");     # Ignore return, since we may already be in t/
+ 
+-my $taint = $ENV{(keys(%ENV))[0]} . "foo";	# ."foo" to avoid zero length
+-ok(tainted($taint),"Sanity - ENV vars are tainted");
++my $taint = $0 . "foo";	# ."foo" to avoid zero length
++ok(tainted($taint),"Sanity - executable name is tainted");
+ 
+ my $evil_zero = 1 - (length($taint) / length($taint));
+ 
+-- 
+2.9.4
+
