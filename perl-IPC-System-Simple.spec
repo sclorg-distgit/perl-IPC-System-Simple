@@ -9,7 +9,7 @@
 
 Name:		%{?scl_prefix}perl-IPC-System-Simple
 Version:	1.25
-Release:	17%{?dist}
+Release:	18%{?dist}
 License:	GPL+ or Artistic
 Summary:	Run commands simply, with detailed diagnostics
 URL:		https://metacpan.org/release/IPC-System-Simple
@@ -24,10 +24,10 @@ BuildRequires:	findutils
 BuildRequires:	make
 BuildRequires:	%{?scl_prefix}perl-interpreter
 BuildRequires:	%{?scl_prefix}perl-generators
+BuildRequires:	%{?scl_prefix}perl(Config)
 BuildRequires:	%{?scl_prefix}perl(ExtUtils::MakeMaker) >= 6.30
 # Module Runtime
 BuildRequires:	%{?scl_prefix}perl(Carp)
-BuildRequires:	%{?scl_prefix}perl(Config)
 BuildRequires:	%{?scl_prefix}perl(constant)
 BuildRequires:	%{?scl_prefix}perl(Exporter)
 BuildRequires:	%{?scl_prefix}perl(List::Util)
@@ -79,6 +79,7 @@ return a zero exit value), or die with rich diagnostic messages.
 
 # Avoid doc-file dependencies
 chmod -c -x examples/*.pl
+%{?scl:scl enable %{scl} '}perl -MConfig -i -pe %{?scl:'"}'%{?scl:"'}s{^#!/usr/bin/perl}{$Config{startperl}}%{?scl:'"}'%{?scl:"'} examples/*.pl%{?scl:'}
 
 %build
 %{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor && make %{?_smp_mflags}%{?scl:'}
@@ -103,6 +104,9 @@ find %{buildroot} -type f -name .packlist -delete
 %{_mandir}/man3/IPC::System::Simple.3*
 
 %changelog
+* Thu Mar 26 2020 Petr Pisar <ppisar@redhat.com> - 1.25-18
+- Normalize shebangs (bug #1817392)
+
 * Fri Jan 03 2020 Jitka Plesnikova <jplesnik@redhat.com> - 1.25-17
 - SCL
 
